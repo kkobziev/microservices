@@ -1,5 +1,6 @@
 package org.example.microservices;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,9 @@ import java.util.Map;
 
 @RestController
 public class CurrencyCalculationController {
+
+    @Autowired
+    private CurrencyExchangeServiceProxy proxy;
 
     @GetMapping("/currency-converter/from/{from}/to/{to}/quantity/{quantity}")
     public CurrencyCalculationResponse convertCurrency(@PathVariable String from,
@@ -27,5 +31,16 @@ public class CurrencyCalculationController {
 
         return new CurrencyCalculationResponse(response.getId(), from, to, response.getConversionMultiple(), quantity,
                 quantity.multiply(response.getConversionMultiple()), response.getPort());
+    }
+
+    @GetMapping("/currency-converter-feign/from/{from}/to/{to}/quantity/{quantity}")
+    public CurrencyCalculationResponse convertCurrencyFeign(@PathVariable String from,
+                                                       @PathVariable String to,
+                                                       @PathVariable BigDecimal quantity) {
+
+        CurrencyCalculationResponse response = proxy.retrieveExchangeValue(from, to);
+        return new CurrencyCalculationResponse(response.getId(), from, to, response.getConversionMultiple(), quantity,
+                quantity.multiply(response.getConversionMultiple()), response.getPort());
+
     }
 }
