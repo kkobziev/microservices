@@ -21,6 +21,8 @@ GET  http://localhost:8000/fault-tolerance-example - hystrix test
 
 Docker compose:
 docker-compose up -d
+docker-compose stop
+docker-compose down --remove-orphans
 
 RabbitMQ:
 docker pull rabbitmq:3-management
