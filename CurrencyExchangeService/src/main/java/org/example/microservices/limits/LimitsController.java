@@ -1,5 +1,6 @@
 package org.example.microservices.limits;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,16 @@ public class LimitsController {
                 configuration.getMinimum());
 
         return limitResponse;
+    }
+
+    @GetMapping("/fault-tolerance-example")
+    @HystrixCommand(fallbackMethod="fallbackRetrieveConfiguration")
+    public LimitResponse retrieveConfiguration() {
+        throw new RuntimeException("Not available");
+    }
+
+    public LimitResponse fallbackRetrieveConfiguration() {
+        return new LimitResponse(999, 9);
     }
 
 }
